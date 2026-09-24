@@ -92,33 +92,31 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;   /* ✅ aligns buttons to the left */
-    gap: 16px;
+    gap: 14px;
     margin: 30px 0;
     padding-left: 40px;
 }
 
 .quick-links .button {
-    background-color: #007bff;     /* ✅ solid blue background */
-    color: #ffffff;                /* white text */
-    padding: 12px 18px;
+    background-color: #ffffff;     /* ✅ clean white background */
+    color: #0077cc;                /* blue text */
+    padding: 10px 16px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
     font-size: 16px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
-    border: none;
-    min-width: 160px;              /* ✅ compact width */
-    text-align: center;
+    border: 2px solid #0077cc;     /* ✅ subtle blue outline */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
     flex: 0 0 auto;                /* ✅ prevents full-row stretching */
 }
 
 .quick-links .button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-    background-color: #005fa3;
+    background-color: #0077cc;     /* ✅ blue fill on hover */
+    color: #ffffff;                /* white text on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-
 /* =========================================================
    MOBILE RESPONSIVE TWEAKS
 ========================================================= */
