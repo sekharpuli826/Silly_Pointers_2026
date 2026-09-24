@@ -1,42 +1,134 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Ball-by-Ball Update</h1>
+<h1 class="page-title">Live Scoring</h1>
 
-<form method="POST">
-
-    <label>Batsman:</label>
-    <select name="batsman">
-        <option value="{{ striker }}">{{ striker }} (Striker)</option>
-        <option value="{{ non_striker }}">{{ non_striker }} (Non-Striker)</option>
-    </select>
-
-    <label>Bowler:</label>
-    <select name="bowler">
+<form method="POST" action="/admin/set_batsmen">
+    <label>Striker:</label>
+    <select name="striker">
         {% for player in players %}
             <option value="{{ player }}">{{ player }}</option>
         {% endfor %}
     </select>
 
-    <label>Runs:</label>
-    <input type="number" name="runs" min="0" max="6">
-
-    <label>Extra Type:</label>
-    <select name="extra_type">
-        <option value="none">None</option>
-        <option value="wide">Wide</option>
-        <option value="no-ball">No Ball</option>
-        <option value="bye">Bye</option>
-        <option value="leg-bye">Leg Bye</option>
+    <label>Non-Striker:</label>
+    <select name="non_striker">
+        {% for player in players %}
+            <option value="{{ player }}">{{ player }}</option>
+        {% endfor %}
     </select>
 
-    <label>Wicket:</label>
-    <input type="checkbox" name="is_wicket">
-
-    <label>Description:</label>
-    <textarea name="description"></textarea>
-
-    <button type="submit">Update Ball</button>
+    <button type="submit">Set Batsmen</button>
 </form>
+
+<button type="submit" class="add-ball">+ Add Ball</button>
+
+
+<!-- ============================
+     LIVE SCORE SUMMARY
+============================= -->
+<div class="card">
+    <h2>Scoreboard</h2>
+    <p><strong>Score:</strong> {{ live_score.runs }}/{{ live_score.wickets }}</p>
+    <p><strong>Overs:</strong> {{ live_score.overs }}</p>
+
+    <p><strong>Striker:</strong> {{ striker }}</p>
+    <p><strong>Non-Striker:</strong> {{ non_striker }}</p>
+</div>
+
+<!-- ============================
+     BALL UPDATE FORM
+============================= -->
+<div class="card">
+    <h2>Update Ball</h2>
+
+    <form method="POST">
+
+        <label>Batsman:</label>
+        <select name="batsman">
+            <option value="{{ striker }}">{{ striker }} (Striker)</option>
+            <option value="{{ non_striker }}">{{ non_striker }} (Non-Striker)</option>
+        </select>
+
+        <label>Bowler:</label>
+        <select name="bowler">
+            {% for player in players %}
+                <option value="{{ player }}">{{ player }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Runs:</label>
+        <input type="number" name="runs" min="0" max="6">
+
+        <label>Extra Type:</label>
+        <select name="extra_type">
+            <option value="none">None</option>
+            <option value="wide">Wide</option>
+            <option value="no-ball">No Ball</option>
+            <option value="bye">Bye</option>
+            <option value="leg-bye">Leg Bye</option>
+        </select>
+
+        <label>Wicket:</label>
+        <input type="checkbox" name="is_wicket">
+
+        <label>Description:</label>
+        <textarea name="description"></textarea>
+
+        <button type="submit">Add Ball</button>
+    </form>
+</div>
+
+<!-- ============================
+     BALL BY BALL TABLE
+============================= -->
+<div class="card">
+    <h2>Ball-by-Ball</h2>
+
+    <table>
+        <tr>
+            <th>Over</th>
+            <th>Ball</th>
+            <th>Batsman</th>
+            <th>Bowler</th>
+            <th>Runs</th>
+            <th>Extra</th>
+            <th>Wicket</th>
+            <th>Description</th>
+        </tr>
+
+        {% for b in ball_by_ball %}
+        <tr>
+            <td>{{ b.over }}</td>
+            <td>{{ b.ball }}</td>
+            <td>{{ b.batsman }}</td>
+            <td>{{ b.bowler }}</td>
+            <td>{{ b.runs }}</td>
+            <td>{{ b.extra_type }}</td>
+            <td>{% if b.is_wicket %}Yes{% else %}No{% endif %}</td>
+            <td>{{ b.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- ============================
+     FALL OF WICKETS
+============================= -->
+<div class="card">
+    <h2>Fall of Wickets</h2>
+
+    {% if fall_of_wickets %}
+        <ul>
+        {% for w in fall_of_wickets %}
+            <li>
+                {{ w.score }} at {{ w.over }} — {{ w.batsman }} ({{ w.description }})
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No wickets yet.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

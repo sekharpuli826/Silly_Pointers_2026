@@ -380,3 +380,17 @@ th {
     padding: 8px 10px;
     border-radius: 4px 0 0 4px;
 }
+
+.add-ball {
+    background-color: #0077cc;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.add-ball:hover {
+    background-color: #005fa3;
+}

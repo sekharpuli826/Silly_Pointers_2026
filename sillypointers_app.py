@@ -844,9 +844,36 @@ def ball_update():
                 if extra_type in ["bye", "leg-bye"] and runs % 2 == 1:
                     striker, non_striker = non_striker, striker
 
-        return "Ball updated!"
+        # ✅ Instead of returning a success message, re-render the same page
+        return render_template(
+            "admin_ball_update.html",
+            players=players,
+            striker=striker,
+            non_striker=non_striker,
+            live_score=live_score,
+            ball_by_ball=ball_by_ball,
+            batsman_stats=batsman_stats,
+            bowler_stats=bowler_stats,
+            extras=extras,
+            fall_of_wickets=fall_of_wickets
+        )
 
-    return render_template("admin_ball_update.html", players=players, striker=striker, non_striker=non_striker)
+    # GET request → show form with dropdowns
+    return render_template(
+        "admin_ball_update.html",
+        players=players,
+        striker=striker,
+        non_striker=non_striker,
+        live_score=live_score,
+        ball_by_ball=ball_by_ball,
+        batsman_stats=batsman_stats,
+        bowler_stats=bowler_stats,
+        extras=extras,
+        fall_of_wickets=fall_of_wickets
+    )
+  
+    return redirect("/admin/ball_update")
+
 
 # -------------------------
 # Reset Match
@@ -956,6 +983,16 @@ def saved_matches():
         results=results,
         title="Saved Matches"
     )
+
+# -------------------------
+# Set Striker and Non Striker PAGE
+# -------------------------
+@app.route("/admin/set_batsmen", methods=["POST"])
+def set_batsmen():
+    global striker, non_striker
+    striker = request.form["striker"]
+    non_striker = request.form["non_striker"]
+    return redirect("/admin/ball_update")
 
 
 def update_points_and_nrr(match):
