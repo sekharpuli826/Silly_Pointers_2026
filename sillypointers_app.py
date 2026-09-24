@@ -160,7 +160,7 @@ def home():
         "home.html",
         live_score=live_score,
         points=sorted(points_table.items(), key=lambda x: x[1]["points"], reverse=True),
-        leaderboard=sorted(player_stats.items(), key=lambda x: x[1]["points"], reverse=True),
+        leaderboard = sorted(player_stats.items(), key=lambda x: x[1]['points'], reverse=True)
         team_list=list(points_table.keys()),
         title="Silly Pointers 2026"
     )
