@@ -1,33 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Create Match</h1>
+<div class="page-title">Create Match</div>
 
-<form method="POST">
-    <label>Team 1:</label>
-    <select name="team1">
-        {% for t in teams %}
-        <option value="{{ t }}">{{ t }}</option>
-        {% endfor %}
-    </select><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Team 2:</label>
-    <select name="team2">
-        {% for t in teams %}
-        <option value="{{ t }}">{{ t }}</option>
-        {% endfor %}
-    </select><br><br>
+        <label>Team 1 (Batting First):</label>
+        <select name="team1" required>
+            {% for t in teams %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Date:</label>
-    <input type="date" name="date"><br><br>
+        <label>Team 2 (Bowling First):</label>
+        <select name="team2" required>
+            {% for t in teams %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Time:</label>
-    <input type="time" name="time"><br><br>
+        <label>Date:</label>
+        <input type="date" name="date" required>
 
-    <label>Venue:</label>
-    <input type="text" name="venue"><br><br>
+        <label>Time:</label>
+        <input type="time" name="time" required>
 
-    <button type="submit">Create Match</button>
-</form>
+        <label>Venue:</label>
+        <input type="text" name="venue" placeholder="Ground name" required>
+
+        <button type="submit" class="button">Start Match</button>
+    </form>
+</div>
 
 {% endblock %}

@@ -1,149 +1,111 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Match Summary</h1>
-<p><strong>Date:</strong> {{ match.timestamp }}</p>
+<div class="page-title">Match Summary #{{ match_id + 1 }}</div>
 
-<h2>Final Score</h2>
-<p>
-    {{ match.final_score.runs }}/{{ match.final_score.wickets }}
-    ({{ match.final_score.overs }} overs)
-</p>
-
-<hr>
-
-<h2>Batsman Stats</h2>
-<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
-    <tr>
-        <th>Batsman</th>
-        <th>Runs</th>
-        <th>Balls</th>
-        <th>4s</th>
-        <th>6s</th>
-        <th>Strike Rate</th>
-        <th>Status</th>
-    </tr>
-
-    {% for name, stats in match.batsman_stats.items() %}
-    <tr>
-        <td>{{ name }}</td>
-        <td>{{ stats.runs }}</td>
-        <td>{{ stats.balls }}</td>
-        <td>{{ stats.fours }}</td>
-        <td>{{ stats.sixes }}</td>
-        <td>
-            {% if stats.balls > 0 %}
-                {{ (stats.runs / stats.balls * 100) | round(2) }}
-            {% else %}
-                0.00
-            {% endif %}
-        </td>
-        <td>{{ "Out" if stats.out else "Not Out" }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<hr>
-
-<h2>Bowler Stats</h2>
-<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
-    <tr>
-        <th>Bowler</th>
-        <th>Overs</th>
-        <th>Runs</th>
-        <th>Wickets</th>
-        <th>Economy</th>
-    </tr>
-
-    {% for name, stats in match.bowler_stats.items() %}
-    <tr>
-        <td>{{ name }}</td>
-
-        {% set overs = stats.balls // 6 %}
-        {% set balls = stats.balls % 6 %}
-        <td>{{ overs }}.{{ balls }}</td>
-
-        <td>{{ stats.runs }}</td>
-        <td>{{ stats.wickets }}</td>
-
-        <td>
-            {% if stats.balls > 0 %}
-                {{ (stats.runs / (stats.balls / 6)) | round(2) }}
-            {% else %}
-                0.00
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
-<hr>
-
-<h2>Extras Breakdown</h2>
-<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
-    <tr><th>Type</th><th>Runs</th></tr>
-    <tr><td>Wides</td><td>{{ match.extras.wides }}</td></tr>
-    <tr><td>No Balls</td><td>{{ match.extras.no_balls }}</td></tr>
-    <tr><td>Byes</td><td>{{ match.extras.byes }}</td></tr>
-    <tr><td>Leg Byes</td><td>{{ match.extras.leg_byes }}</td></tr>
-</table>
-
-<hr>
-
-<h2>Ball-by-Ball</h2>
-<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
-    <tr>
-        <th>Over</th>
-        <th>Ball</th>
-        <th>Batsman</th>
-        <th>Bowler</th>
-        <th>Runs</th>
-        <th>Extra</th>
-        <th>Wicket</th>
-        <th>Description</th>
-    </tr>
-
-    {% for b in match.balls %}
-    <tr>
-        <td>{{ b.over }}</td>
-        <td>{{ b.ball }}</td>
-        <td>{{ b.batsman }}</td>
-        <td>{{ b.bowler }}</td>
-        <td>{{ b.runs }}</td>
-        <td>{{ b.extra_type }}</td>
-        <td>{{ "Yes" if b.is_wicket else "No" }}</td>
-        <td>{{ b.description }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<hr>
-
-<p><a href="/saved_matches">Back to Saved Matches</a></p>
-
-<h2>Fall of Wickets</h2>
-
-<div class="table-container">
-<table>
-    <tr>
-        <th>Score</th>
-        <th>Over</th>
-        <th>Batsman</th>
-        <th>Bowler</th>
-        <th>Description</th>
-    </tr>
-
-    {% for w in match.fall_of_wickets %}
-    <tr>
-        <td>{{ w.score }}</td>
-        <td>{{ w.over }}</td>
-        <td>{{ w.batsman }}</td>
-        <td>{{ w.bowler }}</td>
-        <td>{{ w.description }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="card">
+    <h2>Final Score</h2>
+    <p><strong>{{ match.final_score.runs }}/{{ match.final_score.wickets }}</strong>  
+       ({{ match.final_score.overs }} overs)</p>
+    <p><strong>Batting Team:</strong> {{ match.final_score.batting_team }}</p>
+    <p><strong>Bowling Team:</strong> {{ match.final_score.bowling_team }}</p>
+    <p><strong>Saved:</strong> {{ match.timestamp }}</p>
 </div>
 
+<div class="card">
+    <h2>Ball‑by‑Ball</h2>
+    <table>
+        <tr>
+            <th>Over</th>
+            <th>Ball</th>
+            <th>Batsman</th>
+            <th>Bowler</th>
+            <th>Runs</th>
+            <th>Extra</th>
+            <th>Wicket</th>
+            <th>Description</th>
+        </tr>
+        {% for b in match.balls %}
+        <tr>
+            <td>{{ b.over }}</td>
+            <td>{{ b.ball }}</td>
+            <td>{{ b.batsman }}</td>
+            <td>{{ b.bowler }}</td>
+            <td>{{ b.runs }}</td>
+            <td>{{ b.extra_type }}</td>
+            <td>{% if b.is_wicket %}Yes{% else %}No{% endif %}</td>
+            <td>{{ b.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Batsman Stats</h2>
+    <table>
+        <tr>
+            <th>Batsman</th>
+            <th>Runs</th>
+            <th>Balls</th>
+            <th>4s</th>
+            <th>6s</th>
+            <th>Status</th>
+        </tr>
+        {% for name, s in match.batsman_stats.items() %}
+        <tr>
+            <td>{{ name }}</td>
+            <td>{{ s.runs }}</td>
+            <td>{{ s.balls }}</td>
+            <td>{{ s.fours }}</td>
+            <td>{{ s.sixes }}</td>
+            <td>{% if s.out %}Out{% else %}Not Out{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Bowler Stats</h2>
+    <table>
+        <tr>
+            <th>Bowler</th>
+            <th>Balls</th>
+            <th>Runs</th>
+            <th>Wickets</th>
+        </tr>
+        {% for name, s in match.bowler_stats.items() %}
+        <tr>
+            <td>{{ name }}</td>
+            <td>{{ s.balls }}</td>
+            <td>{{ s.runs }}</td>
+            <td>{{ s.wickets }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Extras</h2>
+    <table>
+        <tr><th>Type</th><th>Runs</th></tr>
+        <tr><td>Wides</td><td>{{ match.extras.wides }}</td></tr>
+        <tr><td>No Balls</td><td>{{ match.extras.no_balls }}</td></tr>
+        <tr><td>Byes</td><td>{{ match.extras.byes }}</td></tr>
+        <tr><td>Leg Byes</td><td>{{ match.extras.leg_byes }}</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Fall of Wickets</h2>
+    {% if match.fall_of_wickets %}
+        <ul>
+        {% for w in match.fall_of_wickets %}
+            <li>{{ w.score }} at {{ w.over }} — {{ w.batsman }} ({{ w.description }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No wickets recorded.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

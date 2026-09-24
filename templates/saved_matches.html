@@ -1,24 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Saved Matches</h1>
+<div class="page-title">Saved Matches</div>
 
-<table border="1" cellpadding="10" style="width:100%; border-collapse:collapse;">
-    <tr>
-        <th>#</th>
-        <th>Date</th>
-        <th>Final Score</th>
-        <th>View</th>
-    </tr>
-
+{% if results %}
     {% for match in results %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ match.timestamp }}</td>
-        <td>{{ match.final_score.runs }}/{{ match.final_score.wickets }} ({{ match.final_score.overs }} ov)</td>
-        <td><a href="/match_summary/{{ loop.index0 }}">View Summary</a></td>
-    </tr>
+    <div class="card">
+        <h2>Match #{{ loop.index }}</h2>
+        <p><strong>Final Score:</strong> {{ match.final_score.runs }}/{{ match.final_score.wickets }} ({{ match.final_score.overs }} overs)</p>
+        <p><strong>Saved:</strong> {{ match.timestamp }}</p>
+        <a class="button" href="/match_summary/{{ loop.index0 }}">View Summary</a>
+    </div>
     {% endfor %}
-</table>
+{% else %}
+    <p>No saved matches yet.</p>
+{% endif %}
 
 {% endblock %}

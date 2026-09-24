@@ -1,42 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Update Live Score</h1>
+<div class="page-title">Update Live Score</div>
 
-<form method="POST">
-    <label>Batting Team:</label>
-    <input type="text" name="batting_team"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Runs:</label>
-    <input type="number" name="runs"><br><br>
+        <label>Batting Team:</label>
+        <select name="batting_team" required>
+            {% for t in live_score.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Wickets:</label>
-    <input type="number" name="wickets"><br><br>
+        <label>Runs:</label>
+        <input type="number" name="runs" required>
 
-    <label>Overs (e.g., 12.3):</label>
-    <input type="text" name="overs"><br><br>
+        <label>Wickets:</label>
+        <input type="number" name="wickets" required>
 
-    <label>Bowling Team:</label>
-    <input type="text" name="bowling_team"><br><br>
+        <label>Overs:</label>
+        <input type="text" name="overs" placeholder="e.g., 12.3" required>
 
-    <label>Last Update (e.g., 3:45 PM):</label>
-    <input type="text" name="last_update"><br><br>
+        <label>Bowling Team:</label>
+        <select name="bowling_team" required>
+            {% for t in live_score.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <!-- ⭐ NEW FIELDS FOR AUTO PLAYER STATS UPDATE -->
+        <label>Last Update:</label>
+        <input type="text" name="last_update" placeholder="Optional">
 
-    <label>Striker:</label>
-    <input type="text" name="striker"><br><br>
+        <hr>
 
-    <label>Bowler:</label>
-    <input type="text" name="bowler"><br><br>
+        <h3>Auto‑Update Player Stats</h3>
 
-    <label>Runs Scored (this ball):</label>
-    <input type="number" name="runs_scored"><br><br>
+        <label>Striker:</label>
+        <select name="striker">
+            {% for name, s in player_stats.items() %}
+                <option value="{{ name }}">{{ name }} ({{ s.team }})</option>
+            {% endfor %}
+        </select>
 
-    <label>Wicket Taken (0 or 1):</label>
-    <input type="number" name="wicket_taken"><br><br>
+        <label>Bowler:</label>
+        <select name="bowler">
+            {% for name, s in player_stats.items() %}
+                <option value="{{ name }}">{{ name }} ({{ s.team }})</option>
+            {% endfor %}
+        </select>
 
-    <button type="submit">Update Live Score</button>
-</form>
+        <label>Runs Scored:</label>
+        <input type="number" name="runs_scored" value="0">
+
+        <label>Wicket Taken:</label>
+        <select name="wicket_taken">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+
+        <button type="submit" class="button">Update Live Score</button>
+    </form>
+</div>
 
 {% endblock %}

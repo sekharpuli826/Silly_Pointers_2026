@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+import os
+import json
+from datetime import datetime
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-
 app.config["UPLOAD_FOLDER"] = "static/logos"
 
 
@@ -148,7 +151,6 @@ non_striker = None
 fall_of_wickets = []
 
 
-
 # -------------------------
 # HOME PAGE
 # -------------------------
@@ -177,12 +179,13 @@ def teams():
     ]
     return render_template("teams.html", teams=teams_data, title="Teams - Silly Pointers 2026")
 
+
 # -------------------------
 # MATCHES PAGE
 # -------------------------
 @app.route("/matches")
 def matches():
-    matches_data = [
+    matches_data_list = [
         # Saturday Oct 3rd 2026
         {
             "day": "Saturday",
@@ -250,57 +253,59 @@ def matches():
 
     return render_template(
         "matches.html",
-        matches=matches_data,
+        matches=matches_data_list,
         title="Matches - Silly Pointers 2026"
     )
+
 
 # -------------------------
 # POINTS TABLE PAGE
 # -------------------------
 @app.route("/points")
 def points():
-    points_table = [
+    table = [
         {
             "team": "Silly Warriors",
-            "played": 0,
-            "won": 0,
-            "lost": 0,
-            "points": 0,
-            "nrr": "0.000"
+            "played": points_table["Silly Warriors"]["played"],
+            "won": points_table["Silly Warriors"]["won"],
+            "lost": points_table["Silly Warriors"]["lost"],
+            "points": points_table["Silly Warriors"]["points"],
+            "nrr": points_table["Silly Warriors"]["nrr"]
         },
         {
             "team": "Cric Souls",
-            "played": 0,
-            "won": 0,
-            "lost": 0,
-            "points": 0,
-            "nrr": "0.000"
+            "played": points_table["Cric Souls"]["played"],
+            "won": points_table["Cric Souls"]["won"],
+            "lost": points_table["Cric Souls"]["lost"],
+            "points": points_table["Cric Souls"]["points"],
+            "nrr": points_table["Cric Souls"]["nrr"]
         },
         {
             "team": "Wicket Wizards",
-            "played": 0,
-            "won": 0,
-            "lost": 0,
-            "points": 0,
-            "nrr": "0.000"
+            "played": points_table["Wicket Wizards"]["played"],
+            "won": points_table["Wicket Wizards"]["won"],
+            "lost": points_table["Wicket Wizards"]["lost"],
+            "points": points_table["Wicket Wizards"]["points"],
+            "nrr": points_table["Wicket Wizards"]["nrr"]
         },
         {
             "team": "Denver Chargers",
-            "played": 0,
-            "won": 0,
-            "lost": 0,
-            "points": 0,
-            "nrr": "0.000"
+            "played": points_table["Denver Chargers"]["played"],
+            "won": points_table["Denver Chargers"]["won"],
+            "lost": points_table["Denver Chargers"]["lost"],
+            "points": points_table["Denver Chargers"]["points"],
+            "nrr": points_table["Denver Chargers"]["nrr"]
         }
     ]
 
-    points_table = sorted(points_table, key=lambda x: x["points"], reverse=True)
+    table = sorted(table, key=lambda x: x["points"], reverse=True)
 
     return render_template(
         "points.html",
-        points=points_table,
+        points=table,
         title="Points Table - Silly Pointers 2026"
     )
+
 
 # -------------------------
 # LEADERBOARD PAGE
@@ -319,7 +324,7 @@ def leaderboard():
         title="Leaderboard - Silly Pointers 2026"
     )
 
-    
+
 # -------------------------
 # ADMIN PAGE
 # -------------------------
@@ -327,45 +332,55 @@ def leaderboard():
 def admin_home():
     return render_template("admin_home.html", title="Admin Panel - Silly Pointers 2026")
 
+
 # -------------------------
 # UPDATE POINTS PAGE
 # -------------------------
-
 @app.route("/admin/update_points", methods=["GET", "POST"])
 def admin_update_points():
     if request.method == "POST":
         team = request.form["team"]
-        played = request.form["played"]
-        won = request.form["won"]
-        lost = request.form["lost"]
-        points = request.form["points"]
-        nrr = request.form["nrr"]
+        played = int(request.form["played"])
+        won = int(request.form["won"])
+        lost = int(request.form["lost"])
+        points_val = int(request.form["points"])
+        nrr_val = request.form["nrr"]
 
-        # TODO: Save to database or file later
-        print("Updated Points:", team, played, won, lost, points, nrr)
+        points_table[team]["played"] = played
+        points_table[team]["won"] = won
+        points_table[team]["lost"] = lost
+        points_table[team]["points"] = points_val
+        points_table[team]["nrr"] = nrr_val
 
-        return "Points updated successfully!"
+        return redirect("/points")
 
     return render_template("admin_update_points.html", title="Update Points")
-    
-# -------------------------
-# UPDATE LEADERBOARD  PAGE
-# -------------------------
 
+
+# -------------------------
+# UPDATE LEADERBOARD PAGE
+# -------------------------
 @app.route("/admin/update_leaderboard", methods=["GET", "POST"])
 def admin_update_leaderboard():
     if request.method == "POST":
         player = request.form["player"]
         team = request.form["team"]
-        runs = request.form["runs"]
-        wickets = request.form["wickets"]
-        points = request.form["points"]
+        runs = int(request.form["runs"])
+        wickets = int(request.form["wickets"])
+        points_val = int(request.form["points"])
 
-        print("Updated Leaderboard:", player, team, runs, wickets, points)
+        if player not in player_stats:
+            player_stats[player] = {"team": team, "runs": 0, "wickets": 0, "points": 0}
 
-        return "Leaderboard updated successfully!"
+        player_stats[player]["team"] = team
+        player_stats[player]["runs"] = runs
+        player_stats[player]["wickets"] = wickets
+        player_stats[player]["points"] = points_val
+
+        return redirect("/leaderboard")
 
     return render_template("admin_update_leaderboard.html", title="Update Leaderboard")
+
 
 # -------------------------
 # UPDATE MATCH RESULTS PAGE
@@ -410,12 +425,13 @@ def admin_update_matches():
 
         # Recalculate NRR for both teams
         for team in [team1, team2]:
-            scored_rate = team_stats[team]["runs_scored"] / team_stats[team]["overs_faced"]
-            conceded_rate = team_stats[team]["runs_conceded"] / team_stats[team]["overs_bowled"]
-            nrr_value = scored_rate - conceded_rate
-            points_table[team]["nrr"] = f"{nrr_value:.3f}"
+            if team_stats[team]["overs_faced"] > 0 and team_stats[team]["overs_bowled"] > 0:
+                scored_rate = team_stats[team]["runs_scored"] / team_stats[team]["overs_faced"]
+                conceded_rate = team_stats[team]["runs_conceded"] / team_stats[team]["overs_bowled"]
+                nrr_value = scored_rate - conceded_rate
+                points_table[team]["nrr"] = f"{nrr_value:.3f}"
 
-        return "Match result + NRR updated!"
+        return redirect("/points")
 
     return render_template("admin_update_matches.html", title="Update Match Results")
 
@@ -423,7 +439,6 @@ def admin_update_matches():
 # -------------------------
 # LIVE PAGE
 # -------------------------
-
 @app.route("/live")
 def live():
     return render_template(
@@ -438,6 +453,7 @@ def live():
         non_striker=non_striker,
         title="Live Score - Silly Pointers 2026"
     )
+
 
 # -------------------------
 # Admin Live_score PAGE
@@ -455,28 +471,29 @@ def admin_live_score():
         live_score["last_update"] = request.form["last_update"]
 
         # Auto-update player stats
-        striker = request.form["striker"]
-        bowler = request.form["bowler"]
+        striker_name = request.form["striker"]
+        bowler_name = request.form["bowler"]
         runs_scored = int(request.form["runs_scored"])
         wicket_taken = int(request.form["wicket_taken"])
 
         # Update batting stats
-        player_stats[striker]["runs"] += runs_scored
-        player_stats[striker]["points"] += runs_scored // 10
+        if striker_name in player_stats:
+            player_stats[striker_name]["runs"] += runs_scored
+            player_stats[striker_name]["points"] += runs_scored // 10
 
         # Update bowling stats
-        if wicket_taken == 1:
-            player_stats[bowler]["wickets"] += 1
-            player_stats[bowler]["points"] += 5
+        if bowler_name in player_stats and wicket_taken == 1:
+            player_stats[bowler_name]["wickets"] += 1
+            player_stats[bowler_name]["points"] += 5
 
-        return "Live score + player stats updated!"
+        return redirect("/leaderboard")
 
     return render_template("admin_live_score.html", title="Update Live Score")
+
 
 # -------------------------
 # View All Players PAGE
 # -------------------------
-
 @app.route("/admin/players")
 def admin_players():
     return render_template(
@@ -486,10 +503,10 @@ def admin_players():
         title="Manage Players"
     )
 
+
 # -------------------------
 # Add Player PAGE
 # -------------------------
-
 @app.route("/admin/add_player", methods=["GET", "POST"])
 def admin_add_player():
     if request.method == "POST":
@@ -502,22 +519,24 @@ def admin_add_player():
         # Add to stats
         player_stats[name] = {"team": team, "runs": 0, "wickets": 0, "points": 0}
 
-        return "Player added successfully!"
+        return redirect("/admin/players")
 
     return render_template("admin_add_player.html", title="Add Player")
+
 
 # -------------------------
 # Edit Player PAGE
 # -------------------------
-
-
 @app.route("/admin/edit_player/<player>", methods=["GET", "POST"])
 def admin_edit_player(player):
+    if player not in player_stats:
+        return "Player not found!"
+
     if request.method == "POST":
         player_stats[player]["runs"] = int(request.form["runs"])
         player_stats[player]["wickets"] = int(request.form["wickets"])
         player_stats[player]["points"] = int(request.form["points"])
-        return "Player stats updated!"
+        return redirect("/admin/players")
 
     return render_template(
         "admin_edit_player.html",
@@ -526,27 +545,35 @@ def admin_edit_player(player):
         title="Edit Player"
     )
 
+
 # -------------------------
 # Delete Player PAGE
 # -------------------------
 @app.route("/admin/delete_player/<player>")
 def admin_delete_player(player):
+    if player not in player_stats:
+        return "Player not found!"
+
     team = player_stats[player]["team"]
 
     # Remove from roster
-    team_roster[team].remove(player)
+    if player in team_roster[team]:
+        team_roster[team].remove(player)
 
     # Remove from stats
     del player_stats[player]
 
-    return "Player deleted!"
+    return redirect("/admin/players")
+
 
 # -------------------------
-# Create Match PAGE
+# Create Match PAGE (Tournament + Scoring Init)
 # -------------------------
 @app.route("/admin/create_match", methods=["GET", "POST"])
 def admin_create_match():
     global match_counter, matches_data
+    global striker, non_striker, live_score
+    global ball_by_ball, batsman_stats, bowler_stats, extras, fall_of_wickets
 
     if request.method == "POST":
         team1 = request.form["team1"]
@@ -571,7 +598,24 @@ def admin_create_match():
             "winner": ""
         }
 
-        return f"Match {match_id} created successfully!"
+        # Initialize scoring engine for this match
+        striker = team_roster[team1][0]
+        non_striker = team_roster[team1][1]
+
+        live_score["batting_team"] = team1
+        live_score["bowling_team"] = team2
+        live_score["runs"] = 0
+        live_score["wickets"] = 0
+        live_score["overs"] = "0.0"
+        live_score["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        ball_by_ball.clear()
+        batsman_stats.clear()
+        bowler_stats.clear()
+        extras.update({"wides": 0, "no_balls": 0, "byes": 0, "leg_byes": 0})
+        fall_of_wickets.clear()
+
+        return redirect("/admin/ball_update")
 
     return render_template(
         "admin_create_match.html",
@@ -579,10 +623,10 @@ def admin_create_match():
         title="Create Match"
     )
 
+
 # -------------------------
 # Edit Match PAGE
 # -------------------------
-
 @app.route("/admin/edit_match/<match_id>", methods=["GET", "POST"])
 def admin_edit_match(match_id):
     global matches_data
@@ -602,7 +646,7 @@ def admin_edit_match(match_id):
         # Auto-update points + NRR
         update_points_and_nrr(match)
 
-        return "Match updated successfully!"
+        return redirect("/points")
 
     return render_template(
         "admin_edit_match.html",
@@ -611,22 +655,22 @@ def admin_edit_match(match_id):
         teams=list(team_roster.keys()),
         title="Edit Match"
     )
-    
+
+
 # -------------------------
 # Delete Match PAGE
 # -------------------------
-
 @app.route("/admin/delete_match/<match_id>")
 def admin_delete_match(match_id):
     if match_id in matches_data:
         del matches_data[match_id]
-        return "Match deleted!"
+        return redirect("/matches")
     return "Match not found!"
+
 
 # -------------------------
 # View Scorecard PAGE
 # -------------------------
-
 @app.route("/scorecard/<match_id>")
 def scorecard(match_id):
     match = matches_data.get(match_id)
@@ -640,6 +684,7 @@ def scorecard(match_id):
         title=f"Scorecard - {match_id}"
     )
 
+
 # -------------------------
 # Update Scorecard PAGE
 # -------------------------
@@ -652,7 +697,7 @@ def admin_scorecard(match_id):
             "fall_of_wickets": request.form["fall_of_wickets"],
             "summary": request.form["summary"]
         }
-        return "Scorecard updated!"
+        return redirect(f"/scorecard/{match_id}")
 
     return render_template(
         "admin_scorecard.html",
@@ -661,12 +706,10 @@ def admin_scorecard(match_id):
         title="Update Scorecard"
     )
 
+
 # -------------------------
 # Upload Logo PAGE
 # -------------------------
-import os
-from werkzeug.utils import secure_filename
-
 @app.route("/admin/upload_logo", methods=["GET", "POST"])
 def upload_logo():
     if request.method == "POST":
@@ -676,13 +719,17 @@ def upload_logo():
         filename = secure_filename(team.replace(" ", "_") + ".jpeg")
         file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-        return "Logo uploaded successfully!"
+        team_logos[team] = filename
+
+        return redirect("/teams")
 
     return render_template(
         "admin_upload_logo.html",
         teams=list(team_roster.keys()),
         title="Upload Team Logo"
     )
+
+
 # -------------------------
 # View Commentary PAGE
 # -------------------------
@@ -696,6 +743,7 @@ def view_commentary(match_id):
         title="Ball-by-Ball Commentary"
     )
 
+
 # -------------------------
 # Add Commentary PAGE
 # -------------------------
@@ -704,7 +752,7 @@ def admin_commentary(match_id):
     if request.method == "POST":
         text = request.form["text"]
         commentary.setdefault(match_id, []).append(text)
-        return "Commentary added!"
+        return redirect(f"/admin/commentary/{match_id}")
 
     return render_template(
         "admin_commentary.html",
@@ -713,25 +761,27 @@ def admin_commentary(match_id):
         title="Add Commentary"
     )
 
+
 # -------------------------
 # Team Details PAGE
 # -------------------------
 @app.route("/teams/<team_name>")
 def team_details(team_name):
-    players = team_roster.get(team_name, [])
+    players_list = team_roster.get(team_name, [])
     logo = team_logos.get(team_name, "default_logo.jpeg")
     captain = team_captains.get(team_name, None)
     return render_template(
         "team_details.html",
         team=team_name,
-        players=players,
+        players=players_list,
         logo=logo,
         captain=captain,
         title=f"{team_name} - Team Details"
     )
 
+
 # -------------------------
-# Ball by Ball Update PAGE
+# Ball by Ball Update PAGE (MAIN SCORING)
 # -------------------------
 @app.route("/admin/ball_update", methods=["GET", "POST"])
 def ball_update():
@@ -746,7 +796,7 @@ def ball_update():
         is_wicket = "is_wicket" in request.form
         description = request.form["description"]
 
-        # Over/ball calculation
+        # Over/ball calculation (legal balls only)
         legal_balls = sum(
             1 for b in ball_by_ball
             if b["extra_type"] not in ["wide", "no-ball"]
@@ -771,6 +821,7 @@ def ball_update():
         if is_wicket:
             live_score["wickets"] += 1
         live_score["overs"] = f"{over}.{ball}"
+        live_score["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # Batsman stats
         if batsman not in batsman_stats:
@@ -832,31 +883,14 @@ def ball_update():
             })
 
         # Auto Strike Rotation
-        if is_wicket:
-            striker = None
-        else:
+        if not is_wicket:
             if extra_type not in ["wide", "no-ball"]:
                 if runs % 2 == 1:
                     striker, non_striker = non_striker, striker
                 if ball == 6:
                     striker, non_striker = non_striker, striker
-            else:
-                if extra_type in ["bye", "leg-bye"] and runs % 2 == 1:
-                    striker, non_striker = non_striker, striker
 
-        # ✅ Instead of returning a success message, re-render the same page
-        return render_template(
-            "admin_ball_update.html",
-            players=players,
-            striker=striker,
-            non_striker=non_striker,
-            live_score=live_score,
-            ball_by_ball=ball_by_ball,
-            batsman_stats=batsman_stats,
-            bowler_stats=bowler_stats,
-            extras=extras,
-            fall_of_wickets=fall_of_wickets
-        )
+        return redirect("/admin/ball_update")
 
     # GET request → show form with dropdowns
     return render_template(
@@ -869,10 +903,9 @@ def ball_update():
         batsman_stats=batsman_stats,
         bowler_stats=bowler_stats,
         extras=extras,
-        fall_of_wickets=fall_of_wickets
+        fall_of_wickets=fall_of_wickets,
+        title="Ball-by-Ball Update"
     )
-  
-    return redirect("/admin/ball_update")
 
 
 # -------------------------
@@ -895,30 +928,24 @@ def reset_match():
         "leg_byes": 0
     }
 
-    live_score = {
-        "runs": 0,
-        "wickets": 0,
-        "overs": "0.0"
-    }
+    live_score["runs"] = 0
+    live_score["wickets"] = 0
+    live_score["overs"] = "0.0"
+    live_score["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Reset strike rotation
     striker = None
     non_striker = None
 
-    return "Match has been reset successfully!"
+    return redirect("/admin/ball_update")
 
 
 # -------------------------
 # Save Match PAGE
 # -------------------------
-import json
-from datetime import datetime
-
 @app.route("/admin/save_match")
 def save_match():
     global ball_by_ball, live_score, batsman_stats, bowler_stats, extras, fall_of_wickets
 
-    # Build match summary (FULL VERSION)
     match_summary = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "final_score": live_score,
@@ -929,21 +956,19 @@ def save_match():
         "fall_of_wickets": fall_of_wickets
     }
 
-    # Load existing results
     try:
         with open("match_results.json", "r") as f:
             results = json.load(f)
     except:
         results = []
 
-    # Add new match
     results.append(match_summary)
 
-    # Save back to file
     with open("match_results.json", "w") as f:
         json.dump(results, f, indent=4)
 
-    return "Match saved successfully!"
+    return redirect("/saved_matches")
+
 
 # -------------------------
 # Match Summary PAGE
@@ -967,6 +992,8 @@ def match_summary(match_id):
         match_id=match_id,
         title=f"Match Summary #{match_id + 1}"
     )
+
+
 # -------------------------
 # List Saved matches PAGE
 # -------------------------
@@ -984,6 +1011,7 @@ def saved_matches():
         title="Saved Matches"
     )
 
+
 # -------------------------
 # Set Striker and Non Striker PAGE
 # -------------------------
@@ -995,6 +1023,9 @@ def set_batsmen():
     return redirect("/admin/ball_update")
 
 
+# -------------------------
+# Helper: Update points and NRR
+# -------------------------
 def update_points_and_nrr(match):
     global points_table, team_stats
 
@@ -1030,16 +1061,14 @@ def update_points_and_nrr(match):
     team_stats[team2]["runs_conceded"] += team1_runs
     team_stats[team2]["overs_bowled"] += team1_overs
 
-    # Recalculate NRR
+    # Recalculate NRR for both teams
     for team in [team1, team2]:
-        scored_rate = team_stats[team]["runs_scored"] / team_stats[team]["overs_faced"]
-        conceded_rate = team_stats[team]["runs_conceded"] / team_stats[team]["overs_bowled"]
-        nrr_value = scored_rate - conceded_rate
-        points_table[team]["nrr"] = f"{nrr_value:.3f}"
+        if team_stats[team]["overs_faced"] > 0 and team_stats[team]["overs_bowled"] > 0:
+            scored_rate = team_stats[team]["runs_scored"] / team_stats[team]["overs_faced"]
+            conceded_rate = team_stats[team]["runs_conceded"] / team_stats[team]["overs_bowled"]
+            nrr_value = scored_rate - conceded_rate
+            points_table[team]["nrr"] = f"{nrr_value:.3f}"
 
 
-# -------------------------
-# RUN SERVER
-# -------------------------
 if __name__ == "__main__":
     app.run(debug=True)

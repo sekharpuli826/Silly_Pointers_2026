@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Add Player</h1>
+<div class="page-title">Add Player</div>
 
-<form method="POST">
-    <label>Player Name:</label>
-    <input type="text" name="name"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Team:</label>
-    <select name="team">
-        {% for team in roster %}
-        <option value="{{ team }}">{{ team }}</option>
-        {% endfor %}
-    </select><br><br>
+        <label>Player Name:</label>
+        <input type="text" name="name" required>
 
-    <button type="submit">Add Player</button>
-</form>
+        <label>Team:</label>
+        <select name="team" required>
+            {% for t in roster.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="button">Add Player</button>
+    </form>
+</div>
 
 {% endblock %}

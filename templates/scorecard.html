@@ -1,25 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Scorecard - {{ match_id }}</h1>
+<div class="page-title">Scorecard — {{ match_id }}</div>
 
-<h2>Match Info</h2>
-<p>{{ match.team1 }} vs {{ match.team2 }}</p>
-<p>{{ match.date }} at {{ match.time }}</p>
-<p>Venue: {{ match.venue }}</p>
+<div class="card">
+    <h2>Match Info</h2>
+    <p><strong>{{ match.team1 }}</strong> vs <strong>{{ match.team2 }}</strong></p>
+    <p>Date: {{ match.date }} | Time: {{ match.time }} | Venue: {{ match.venue }}</p>
+</div>
 
-<hr>
+<div class="card">
+    <h2>Batting</h2>
+    <pre>{{ card.batting }}</pre>
+</div>
 
-<h2>Batting</h2>
-<pre>{{ card.batting }}</pre>
+<div class="card">
+    <h2>Bowling</h2>
+    <pre>{{ card.bowling }}</pre>
+</div>
 
-<h2>Bowling</h2>
-<pre>{{ card.bowling }}</pre>
+<div class="card">
+    <h2>Fall of Wickets</h2>
+    <pre>{{ card.fall_of_wickets }}</pre>
+</div>
 
-<h2>Fall of Wickets</h2>
-<pre>{{ card.fall_of_wickets }}</pre>
-
-<h2>Summary</h2>
-<pre>{{ card.summary }}</pre>
+<div class="card">
+    <h2>Summary</h2>
+    <pre>{{ card.summary }}</pre>
+</div>
 
 {% endblock %}

@@ -1,28 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Match Schedule</h1>
+<div class="page-title">Matches</div>
 
-<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
-    <tr>
-        <th>Day</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Team 1</th>
-        <th>Team 2</th>
-        <th>Note</th>
-    </tr>
+{% for m in matches %}
+<div class="card">
+    <h2>{{ m.day }} — {{ m.date }}</h2>
+    <p><strong>Time:</strong> {{ m.time }}</p>
+    <p><strong>{{ m.team1 }}</strong> vs <strong>{{ m.team2 }}</strong></p>
 
-    {% for m in matches %}
-    <tr>
-        <td>{{ m.day }}</td>
-        <td>{{ m.date }}</td>
-        <td>{{ m.time }}</td>
-        <td>{{ m.team1 }}</td>
-        <td>{{ m.team2 }}</td>
-        <td>{{ m.note if m.note else "" }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    {% if m.note %}
+        <p><strong>Note:</strong> {{ m.note }}</p>
+    {% endif %}
+</div>
+{% endfor %}
 
 {% endblock %}

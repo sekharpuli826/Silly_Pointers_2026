@@ -1,28 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Update Points Table</h1>
+<div class="page-title">Update Points Table</div>
 
-<form method="POST">
-    <label>Team:</label>
-    <input type="text" name="team"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Played:</label>
-    <input type="number" name="played"><br><br>
+        <label>Team:</label>
+        <select name="team" required>
+            {% for t in points_table.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Won:</label>
-    <input type="number" name="won"><br><br>
+        <label>Played:</label>
+        <input type="number" name="played" required>
 
-    <label>Lost:</label>
-    <input type="number" name="lost"><br><br>
+        <label>Won:</label>
+        <input type="number" name="won" required>
 
-    <label>Points:</label>
-    <input type="number" name="points"><br><br>
+        <label>Lost:</label>
+        <input type="number" name="lost" required>
 
-    <label>NRR:</label>
-    <input type="text" name="nrr"><br><br>
+        <label>Points:</label>
+        <input type="number" name="points" required>
 
-    <button type="submit">Update</button>
-</form>
+        <label>NRR:</label>
+        <input type="text" name="nrr" placeholder="e.g., 0.456" required>
+
+        <button type="submit" class="button">Update Points</button>
+    </form>
+</div>
 
 {% endblock %}

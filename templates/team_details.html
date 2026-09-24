@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- 🟦 Team Header (name + logo side-by-side) -->
-<h1 style="text-align:center;">{{ team }}</h1>
-<div style="text-align:center; margin-bottom:20px;">
-    <img src="{{ url_for('static', filename='logos/' + logo) }}"
-         alt="{{ team }} Logo"
-         style="height:150px; border-radius:10px;">
+<div class="page-title">{{ team }}</div>
+
+<div class="card">
+    <img src="/static/logos/{{ logo }}" alt="{{ team }} Logo" style="width:150px; display:block; margin:auto;">
+    <h2 style="text-align:center;">Captain: {{ captain }}</h2>
 </div>
 
-<!-- 🟩 Team Members -->
-<h2>Team Members</h2>
-<ul style="font-size:18px;">
-    {% for player in players %}
-        {% if player == captain %}
-            <li><strong>{{ player }} (c)</strong></li>
-        {% else %}
-            <li>{{ player }}</li>
-        {% endif %}
-    {% endfor %}
-</ul>
-
-<!-- 🟨 Quick Links -->
-<div style="text-align:center; margin-top:20px;">
-    <a href="/leaderboard" class="button">Leaderboard</a>
-    <a href="/points" class="button">Points Table</a>
-    <a href="/matches" class="button">Matches</a>
+<div class="card">
+    <h2>Players</h2>
+    <table>
+        <tr>
+            <th>Player</th>
+            <th>Runs</th>
+            <th>Wickets</th>
+            <th>Points</th>
+        </tr>
+        {% for p in players %}
+        <tr>
+            <td>{{ p }}</td>
+            <td>{{ stats[p].runs }}</td>
+            <td>{{ stats[p].wickets }}</td>
+            <td>{{ stats[p].points }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 
 {% endblock %}

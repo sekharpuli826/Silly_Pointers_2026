@@ -1,25 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Update Leaderboard</h1>
+<div class="page-title">Update Player Leaderboard</div>
 
-<form method="POST">
-    <label>Player:</label>
-    <input type="text" name="player"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Team:</label>
-    <input type="text" name="team"><br><br>
+        <label>Player:</label>
+        <select name="player" required>
+            {% for name, stats in player_stats.items() %}
+                <option value="{{ name }}">{{ name }} ({{ stats.team }})</option>
+            {% endfor %}
+        </select>
 
-    <label>Runs:</label>
-    <input type="number" name="runs"><br><br>
+        <label>Team:</label>
+        <select name="team" required>
+            {% for t in points_table.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Wickets:</label>
-    <input type="number" name="wickets"><br><br>
+        <label>Runs:</label>
+        <input type="number" name="runs" required>
 
-    <label>Points:</label>
-    <input type="number" name="points"><br><br>
+        <label>Wickets:</label>
+        <input type="number" name="wickets" required>
 
-    <button type="submit">Update</button>
-</form>
+        <label>Points:</label>
+        <input type="number" name="points" required>
+
+        <button type="submit" class="button">Update Leaderboard</button>
+    </form>
+</div>
 
 {% endblock %}

@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Teams</h1>
+<div class="page-title">Teams</div>
 
 <div class="team-container">
     {% for team in teams %}
-        <div class="team-card">
-            <img src="{{ url_for('static', filename='logos/' + team.logo) }}"
-                 alt="{{ team.name }} Logo">
-            <h3>{{ team.name }}</h3>
-            <a href="/teams/{{ team.name | replace(' ', '%20') }}" class="button">View Team</a>
-        </div>
+    <div class="team-card">
+        <img src="/static/logos/{{ team.logo }}" alt="{{ team.name }} Logo">
+        <h3>{{ team.name }}</h3>
+        <a class="button" href="/teams/{{ team.name }}">View Team</a>
+    </div>
     {% endfor %}
 </div>
 

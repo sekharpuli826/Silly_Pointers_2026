@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Ball-by-Ball Commentary - {{ match_id }}</h1>
+<div class="page-title">Commentary — {{ match_id }}</div>
 
-<ul>
-    {% for line in feed %}
-    <li>{{ line }}</li>
-    {% endfor %}
-</ul>
+<div class="card">
+    {% if feed %}
+        <ul>
+        {% for line in feed %}
+            <li>{{ line }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No commentary added yet.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

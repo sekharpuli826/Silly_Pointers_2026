@@ -1,18 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Add Commentary - {{ match_id }}</h1>
+<div class="page-title">Add Commentary — {{ match_id }}</div>
 
-<form method="POST">
-    <textarea name="text" rows="3" cols="80"></textarea><br><br>
-    <button type="submit">Add</button>
-</form>
+<div class="card">
+    <form method="POST">
+        <label>Commentary Line:</label>
+        <textarea name="text" rows="3" placeholder="Example: 'Brilliant yorker! Middle stump uprooted.'"></textarea>
+        <button type="submit" class="button">Add Commentary</button>
+    </form>
+</div>
 
-<h2>Existing Commentary</h2>
-<ul>
-    {% for line in feed %}
-    <li>{{ line }}</li>
-    {% endfor %}
-</ul>
+<div class="card">
+    <h2>Existing Commentary</h2>
+    {% if feed %}
+        <ul>
+        {% for line in feed %}
+            <li>{{ line }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No commentary added yet.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

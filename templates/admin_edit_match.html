@@ -1,29 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Edit Match {{ match_id }}</h1>
+<div class="page-title">Edit Match — {{ match_id }}</div>
 
-<form method="POST">
-    <label>Team 1 Runs:</label>
-    <input type="number" name="team1_runs" value="{{ match.team1_runs }}"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Team 1 Overs:</label>
-    <input type="text" name="team1_overs" value="{{ match.team1_overs }}"><br><br>
+        <label>Team 1 Runs:</label>
+        <input type="number" name="team1_runs" value="{{ match.team1_runs }}" required>
 
-    <label>Team 2 Runs:</label>
-    <input type="number" name="team2_runs" value="{{ match.team2_runs }}"><br><br>
+        <label>Team 1 Overs:</label>
+        <input type="text" name="team1_overs" value="{{ match.team1_overs }}" placeholder="e.g., 10.0" required>
 
-    <label>Team 2 Overs:</label>
-    <input type="text" name="team2_overs" value="{{ match.team2_overs }}"><br><br>
+        <label>Team 2 Runs:</label>
+        <input type="number" name="team2_runs" value="{{ match.team2_runs }}" required>
 
-    <label>Winner:</label>
-    <select name="winner">
-        <option value="">-- Select Winner --</option>
-        <option value="{{ match.team1 }}">{{ match.team1 }}</option>
-        <option value="{{ match.team2 }}">{{ match.team2 }}</option>
-    </select><br><br>
+        <label>Team 2 Overs:</label>
+        <input type="text" name="team2_overs" value="{{ match.team2_overs }}" placeholder="e.g., 10.0" required>
 
-    <button type="submit">Update Match</button>
-</form>
+        <label>Winner:</label>
+        <select name="winner" required>
+            <option value="">-- Select Winner --</option>
+            <option value="{{ match.team1 }}" {% if match.winner == match.team1 %}selected{% endif %}>
+                {{ match.team1 }}
+            </option>
+            <option value="{{ match.team2 }}" {% if match.winner == match.team2 %}selected{% endif %}>
+                {{ match.team2 }}
+            </option>
+        </select>
+
+        <button type="submit" class="button">Update Match</button>
+    </form>
+</div>
 
 {% endblock %}

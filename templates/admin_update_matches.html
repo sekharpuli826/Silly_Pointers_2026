@@ -1,41 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Update Match Results</h1>
+<div class="page-title">Update Match Results</div>
 
-<form method="POST">
-    <label>Match Number:</label>
-    <input type="number" name="match_no"><br><br>
+<div class="card">
+    <form method="POST">
 
-    <label>Winner:</label>
-    <input type="text" name="winner"><br><br>
+        <label>Match Number:</label>
+        <input type="text" name="match_no" placeholder="M1, M2, etc." required>
 
-    <label>Win Margin:</label>
-    <input type="text" name="margin"><br><br>
+        <label>Team 1:</label>
+        <select name="team1" required>
+            {% for t in points_table.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-    <label>Team 1:</label>
-    <input type="text" name="team1"><br><br>
+        <label>Team 1 Runs:</label>
+        <input type="number" name="team1_runs" required>
 
-    <label>Team 1 Runs:</label>
-    <input type="number" name="team1_runs"><br><br>
+        <label>Team 1 Overs:</label>
+        <input type="text" name="team1_overs" placeholder="e.g., 10.0" required>
 
-    <label>Team 1 Overs:</label>
-    <input type="text" name="team1_overs"><br><br>
+        <label>Team 2:</label>
+        <select name="team2" required>
+            {% for t in points_table.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-   <label>Team 2:</label>
-<input type="text" name="team2"><br><br>
+        <label>Team 2 Runs:</label>
+        <input type="number" name="team2_runs" required>
 
-<label>Team 2 Runs:</label>
-<input type="number" name="team2_runs"><br><br>
+        <label>Team 2 Overs:</label>
+        <input type="text" name="team2_overs" placeholder="e.g., 10.0" required>
 
-<label>Team 2 Overs:</label>
-<input type="text" name="team2_overs"><br><br>
+        <label>Winner:</label>
+        <select name="winner" required>
+            {% for t in points_table.keys() %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
 
-<label>Winner:</label>
-<input type="text" name="winner"><br><br>
-
-
-    <button type="submit">Update</button>
-</form>
+        <button type="submit" class="button">Update Match</button>
+    </form>
+</div>
 
 {% endblock %}
