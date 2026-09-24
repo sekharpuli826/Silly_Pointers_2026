@@ -58,17 +58,18 @@ body {
 .navbar {
     background-color: #ffffff;
     border-bottom: 2px solid #0077cc;
-    padding: 12px 0;
+    padding: 16px 0;          /* slightly taller for better touch area */
     text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle depth */
 }
 
 .navbar a {
     color: #0077cc;
     text-decoration: none;
-    margin: 0 20px;
-    font-weight: bold;
-    font-size: 18px;
-    padding: 12px 16px;
+    margin: 0 16px;           /* balanced spacing */
+    font-weight: 600;
+    font-size: 22px;          /* clearer and more readable */
+    padding: 10px 14px;       /* comfortable tap area */
     display: inline-block;
 }
 
@@ -99,13 +100,16 @@ body {
 .quick-links .button {
     background-color: #ffffff;
     color: #007bff;
-    padding: 20px 28px;
-    border-radius: 10px;
+    padding: 12px 18px;        /* reduced padding */
+    border-radius: 8px;        /* slightly smaller radius */
     text-decoration: none;
     font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    font-size: 16px;           /* smaller text */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
     transition: transform 0.2s ease, box-shadow 0.3s ease;
     border: 2px solid #007bff;
+    min-width: 130px;          /* consistent size */
+    text-align: center;
 }
 
 .quick-links .button:hover {
@@ -284,11 +288,36 @@ input[type="radio"] {
    MOBILE RESPONSIVE TWEAKS
 ========================================================= */
 @media (max-width: 480px) {
+
+    /* Navbar */
+    .navbar a {
+        font-size: 20px;
+        margin: 0 8px;
+        padding: 8px 10px;
+    }
+
+    /* Quick Links */
+    .quick-links {
+        gap: 12px;
+        padding-left: 10px;
+    }
+    .quick-links .button {
+        font-size: 15px;
+        padding: 10px 14px;
+        min-width: 120px;
+    }
+
+    /* Team Cards */
     .team-card {
         width: 160px;
         padding: 12px;
     }
     .team-card img {
         max-height: 120px;
+    }
+
+    /* Spacing */
+    .content, .card, section {
+        margin-bottom: 20px;
     }
 }
