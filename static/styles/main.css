@@ -117,6 +117,16 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
+
+/* =========================================================
+   QUICK LINKS WIDTH FIX
+========================================================= */
+.quick-links .button {
+    width: auto !important;        /* ✅ overrides global 100% width */
+    display: inline-block;         /* ✅ keeps natural button size */
+    flex: 0 0 auto;                /* ✅ prevents stretching */
+}
+
 /* =========================================================
    MOBILE RESPONSIVE TWEAKS
 ========================================================= */
