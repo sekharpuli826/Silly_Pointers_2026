@@ -53,20 +53,24 @@
 
         <label>Batsman:</label>
         <select name="batsman">
-            {% if striker %}
-                <option value="{{ striker }}">{{ striker }} (Striker)</option>
-            {% endif %}
-            {% if non_striker %}
-                <option value="{{ non_striker }}">{{ non_striker }} (Non‑Striker)</option>
-            {% endif %}
-        </select>
+            <option value="{{ striker }}">{{ striker }} (Striker)</option>
+            <option value="{{ non_striker }}">{{ non_striker }} (Non-Striker)</option>
 
-        <label>Bowler:</label>
-        <select name="bowler">
-            {% for player in players %}
-                <option value="{{ player }}">{{ player }}</option>
-            {% endfor %}
-        </select>
+        {% for p in players %}
+        {% if p != striker and p != non_striker %}
+            <option value="{{ p }}">{{ p }}</option>
+        {% endif %}
+    {% endfor %}
+          </select>
+
+
+         <label>Bowler:</label>
+            <select name="bowler">
+              {% for p in bowling_players %}
+             <option value="{{ p }}">{{ p }}</option>
+              {% endfor %}
+            </select>
+
 
         <label>Runs:</label>
         <input type="number" name="runs" min="0" max="6" required>

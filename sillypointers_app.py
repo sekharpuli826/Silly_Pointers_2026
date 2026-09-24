@@ -147,6 +147,10 @@ for team, roster in team_roster.items():
 striker = None
 non_striker = None
 
+# Bowler persistence per over
+current_bowler = None
+balls_in_over = 0
+
 # Fall of wickets
 fall_of_wickets = []
 
@@ -787,27 +791,69 @@ def team_details(team_name):
 def ball_update():
     global ball_by_ball, live_score, batsman_stats, bowler_stats, extras
     global striker, non_striker, players, fall_of_wickets
+    global current_bowler, balls_in_over
 
     if request.method == "POST":
         batsman = request.form["batsman"]
-        bowler = request.form["bowler"]
+        bowler_input = request.form["bowler"]
         runs = int(request.form["runs"])
         extra_type = request.form["extra_type"]
         is_wicket = "is_wicket" in request.form
         description = request.form["description"]
 
-        # Over/ball calculation (legal balls only)
-        legal_balls = sum(
+        # -----------------------------
+        # TEAM-BASED VALIDATION
+        # -----------------------------
+        batting_team = live_score["batting_team"]
+        bowling_team = live_score["bowling_team"]
+
+        batting_team_players = team_roster.get(batting_team, [])
+        bowling_team_players = team_roster.get(bowling_team, [])
+
+        # batsman must be from batting team
+        if batsman not in batting_team_players:
+            return "Invalid batsman selection — must be from batting team.", 400
+
+        # bowler must be from bowling team
+        if bowler_input not in bowling_team_players:
+            return "Invalid bowler selection — must be from bowling team.", 400
+
+        # bowler cannot be striker
+        if bowler_input == striker:
+            return "Bowler cannot be the striker. Please choose a valid bowler.", 400
+
+        # -----------------------------
+        # PERSISTENT BOWLER PER OVER
+        # -----------------------------
+        if current_bowler is None or balls_in_over == 0:
+            # start of a new over → set bowler
+            current_bowler = bowler_input
+
+        bowler = current_bowler
+
+        # -----------------------------
+        # LEGAL BALL / OVER CALC
+        # -----------------------------
+        is_legal = extra_type not in ["wide", "no-ball"]
+
+        # legal balls BEFORE this delivery
+        legal_balls_before = sum(
             1 for b in ball_by_ball
             if b["extra_type"] not in ["wide", "no-ball"]
         )
-        over = legal_balls // 6
-        ball = legal_balls % 6 + 1
 
-        # Add ball entry
+        # total legal balls AFTER this delivery
+        legal_balls_after = legal_balls_before + (1 if is_legal else 0)
+
+        over = legal_balls_after // 6
+        ball = legal_balls_after % 6
+
+        # -----------------------------
+        # ADD BALL ENTRY
+        # -----------------------------
         ball_by_ball.append({
             "over": over,
-            "ball": ball,
+            "ball": ball if ball != 0 else 6,  # display 6th ball as .6
             "batsman": batsman,
             "bowler": bowler,
             "runs": runs,
@@ -816,14 +862,21 @@ def ball_update():
             "description": description
         })
 
-        # Live score
+        # -----------------------------
+        # LIVE SCORE UPDATE
+        # -----------------------------
         live_score["runs"] += runs
         if is_wicket:
             live_score["wickets"] += 1
-        live_score["overs"] = f"{over}.{ball}"
+
+        # overs as X.Y where Y = balls in current over
+        display_ball = ball if ball != 0 else 6
+        live_score["overs"] = f"{over}.{display_ball}"
         live_score["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # -----------------------------
         # Batsman stats
+        # -----------------------------
         if batsman not in batsman_stats:
             batsman_stats[batsman] = {
                 "runs": 0,
@@ -833,7 +886,7 @@ def ball_update():
                 "out": False
             }
 
-        if extra_type not in ["wide", "no-ball"]:
+        if is_legal:
             batsman_stats[batsman]["balls"] += 1
 
         batsman_stats[batsman]["runs"] += runs
@@ -846,7 +899,9 @@ def ball_update():
         if is_wicket:
             batsman_stats[batsman]["out"] = True
 
+        # -----------------------------
         # Bowler stats
+        # -----------------------------
         if bowler not in bowler_stats:
             bowler_stats[bowler] = {
                 "balls": 0,
@@ -854,7 +909,7 @@ def ball_update():
                 "wickets": 0
             }
 
-        if extra_type not in ["wide", "no-ball"]:
+        if is_legal:
             bowler_stats[bowler]["balls"] += 1
 
         bowler_stats[bowler]["runs"] += runs
@@ -862,7 +917,9 @@ def ball_update():
         if is_wicket:
             bowler_stats[bowler]["wickets"] += 1
 
+        # -----------------------------
         # Extras
+        # -----------------------------
         if extra_type == "wide":
             extras["wides"] += runs
         elif extra_type == "no-ball":
@@ -872,30 +929,46 @@ def ball_update():
         elif extra_type == "leg-bye":
             extras["leg_byes"] += runs
 
+        # -----------------------------
         # Fall of Wickets
+        # -----------------------------
         if is_wicket:
             fall_of_wickets.append({
                 "score": f"{live_score['runs']}/{live_score['wickets']}",
-                "over": f"{over}.{ball}",
+                "over": f"{over}.{display_ball}",
                 "batsman": batsman,
                 "bowler": bowler,
                 "description": description
             })
 
+        # -----------------------------
         # Auto Strike Rotation
-        if not is_wicket:
-            if extra_type not in ["wide", "no-ball"]:
-                if runs % 2 == 1:
-                    striker, non_striker = non_striker, striker
-                if ball == 6:
-                    striker, non_striker = non_striker, striker
+        # -----------------------------
+        if not is_wicket and is_legal:
+            # odd runs → swap strike
+            if runs % 2 == 1:
+                striker, non_striker = non_striker, striker
+
+            # end of over → swap strike
+            balls_in_over += 1
+            if balls_in_over == 6:
+                balls_in_over = 0
+                current_bowler = None
+                striker, non_striker = non_striker, striker
 
         return redirect("/admin/ball_update")
 
     # GET request → show form with dropdowns
+    batting_team = live_score["batting_team"]
+    bowling_team = live_score["bowling_team"]
+
+    batting_team_players = team_roster.get(batting_team, [])
+    bowling_team_players = team_roster.get(bowling_team, [])
+
     return render_template(
         "admin_ball_update.html",
-        players=players,
+        players=batting_team_players,      # batsman dropdown = batting team only
+        bowling_players=bowling_team_players,  # bowler dropdown = bowling team only
         striker=striker,
         non_striker=non_striker,
         live_score=live_score,
