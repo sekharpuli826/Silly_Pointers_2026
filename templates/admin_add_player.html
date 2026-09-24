@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Add Player</h1>
+
+<form method="POST">
+    <label>Player Name:</label>
+    <input type="text" name="name"><br><br>
+
+    <label>Team:</label>
+    <select name="team">
+        {% for team in roster %}
+        <option value="{{ team }}">{{ team }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Add Player</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Upload Team Logo</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <label>Select Team:</label>
+    <select name="team">
+        {% for t in teams %}
+        <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Upload Logo (.png):</label>
+    <input type="file" name="logo"><br><br>
+
+    <button type="submit">Upload</button>
+</form>
+
+{% endblock %}

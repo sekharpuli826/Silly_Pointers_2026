@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Leaderboard</h1>
+
+<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Team</th>
+        <th>Runs</th>
+        <th>Wickets</th>
+        <th>Points</th>
+    </tr>
+
+    {% for row in leaderboard %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.player }}</td>
+        <td>{{ row.team }}</td>
+        <td>{{ row.runs }}</td>
+        <td>{{ row.wickets }}</td>
+        <td>{{ row.points }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

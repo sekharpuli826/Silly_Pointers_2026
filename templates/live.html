@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Live Score</h1>
+
+<meta http-equiv="refresh" content="5">
+
+<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th>Batting Team</th>
+        <td>{{ live_score.batting_team }}</td>
+    </tr>
+    <tr>
+        <th>Runs</th>
+        <td>{{ live_score.runs }}</td>
+    </tr>
+    <tr>
+        <th>Wickets</th>
+        <td>{{ live_score.wickets }}</td>
+    </tr>
+    <tr>
+        <th>Overs</th>
+        <td>{{ live_score.overs }}</td>
+    </tr>
+    <tr>
+        <th>Bowling Team</th>
+        <td>{{ live_score.bowling_team }}</td>
+    </tr>
+    <tr>
+        <th>Last Update</th>
+        <td>{{ live_score.last_update }}</td>
+    </tr>
+</table>
+
+<h2>Ball-by-Ball</h2>
+
+<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <th>Over</th>
+        <th>Ball</th>
+        <th>Batsman</th>
+        <th>Bowler</th>
+        <th>Runs</th>
+        <th>Extra</th>
+        <th>Wicket</th>
+        <th>Description</th>
+    </tr>
+
+    {% for ball in ball_by_ball %}
+    <tr>
+        <td>{{ ball.over }}</td>
+        <td>{{ ball.ball }}</td>
+        <td>{{ ball.batsman }}</td>
+        <td>{{ ball.bowler }}</td>
+        <td>{{ ball.runs }}</td>
+        <td>{{ ball.extra_type }}</td>
+        <td>{{ "Yes" if ball.is_wicket else "No" }}</td>
+        <td>{{ ball.description }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Batsman Stats</h2>
+
+<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <th>Batsman</th>
+        <th>Runs</th>
+        <th>Balls</th>
+        <th>4s</th>
+        <th>6s</th>
+        <th>Strike Rate</th>
+        <th>Status</th>
+    </tr>
+
+    {% for name, stats in batsman_stats.items() %}
+    <tr>
+        <td>{{ name }}</td>
+        <td>{{ stats.runs }}</td>
+        <td>{{ stats.balls }}</td>
+        <td>{{ stats.fours }}</td>
+        <td>{{ stats.sixes }}</td>
+        <td>
+            {% if stats.balls > 0 %}
+                {{ (stats.runs / stats.balls * 100) | round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+        </td>
+        <td>{{ "Out" if stats.out else "Not Out" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Bowler Stats</h2>
+
+<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <th>Bowler</th>
+        <th>Overs</th>
+        <th>Runs</th>
+        <th>Wickets</th>
+        <th>Economy</th>
+    </tr>
+
+    {% for name, stats in bowler_stats.items() %}
+    <tr>
+        <td>{{ name }}</td>
+
+        <!-- Convert balls → overs -->
+        <td>
+            {% set overs = stats.balls // 6 %}
+            {% set balls = stats.balls % 6 %}
+            {{ overs }}.{{ balls }}
+        </td>
+
+        <td>{{ stats.runs }}</td>
+        <td>{{ stats.wickets }}</td>
+
+        <!-- Economy = runs / overs -->
+        <td>
+            {% if stats.balls > 0 %}
+                {{ (stats.runs / (stats.balls / 6)) | round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Extras Breakdown</h2>
+
+<table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <th>Type</th>
+        <th>Runs</th>
+    </tr>
+    <tr>
+        <td>Wides</td>
+        <td>{{ extras.wides }}</td>
+    </tr>
+    <tr>
+        <td>No Balls</td>
+        <td>{{ extras.no_balls }}</td>
+    </tr>
+    <tr>
+        <td>Byes</td>
+        <td>{{ extras.byes }}</td>
+    </tr>
+    <tr>
+        <td>Leg Byes</td>
+        <td>{{ extras.leg_byes }}</td>
+    </tr>
+</table>
+
+<h2>Current Batting</h2>
+<div class="table-container">
+<table>
+    <tr>
+        <th>Striker</th>
+        <th>Non-Striker</th>
+    </tr>
+    <tr>
+        <td>{{ striker }}</td>
+        <td>{{ non_striker }}</td>
+    </tr>
+</table>
+</div>
+
+<h2>Fall of Wickets</h2>
+
+<div class="table-container">
+<table>
+    <tr>
+        <th>Score</th>
+        <th>Over</th>
+        <th>Batsman</th>
+        <th>Bowler</th>
+        <th>Description</th>
+    </tr>
+
+    {% for w in fall_of_wickets %}
+    <tr>
+        <td>{{ w.score }}</td>
+        <td>{{ w.over }}</td>
+        <td>{{ w.batsman }}</td>
+        <td>{{ w.bowler }}</td>
+        <td>{{ w.description }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+{% endblock %}

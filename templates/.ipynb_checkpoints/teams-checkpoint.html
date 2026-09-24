@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silly Pointers 2026 - Teams</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .team-card {
+            display: inline-block;
+            width: 200px;
+            margin: 20px;
+            text-align: center;
+        }
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teams</h1>
+
+    {% for team in teams %}
+        <div class="team-card">
+            <img src="{{ url_for('static', filename='logos/' + team.logo) }}">
+            <h3>{{ team.name }}</h3>
+        </div>
+    {% endfor %}
+</body>
+</html>

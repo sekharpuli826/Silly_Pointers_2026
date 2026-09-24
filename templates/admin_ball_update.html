@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Ball-by-Ball Update</h1>
+
+<form method="POST">
+
+    <label>Batsman:</label>
+    <select name="batsman">
+        <option value="{{ striker }}">{{ striker }} (Striker)</option>
+        <option value="{{ non_striker }}">{{ non_striker }} (Non-Striker)</option>
+    </select>
+
+    <label>Bowler:</label>
+    <select name="bowler">
+        {% for player in players %}
+            <option value="{{ player }}">{{ player }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Runs:</label>
+    <input type="number" name="runs" min="0" max="6">
+
+    <label>Extra Type:</label>
+    <select name="extra_type">
+        <option value="none">None</option>
+        <option value="wide">Wide</option>
+        <option value="no-ball">No Ball</option>
+        <option value="bye">Bye</option>
+        <option value="leg-bye">Leg Bye</option>
+    </select>
+
+    <label>Wicket:</label>
+    <input type="checkbox" name="is_wicket">
+
+    <label>Description:</label>
+    <textarea name="description"></textarea>
+
+    <button type="submit">Update Ball</button>
+</form>
+
+{% endblock %}

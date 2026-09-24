@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Ball-by-Ball Commentary - {{ match_id }}</h1>
+
+<ul>
+    {% for line in feed %}
+    <li>{{ line }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

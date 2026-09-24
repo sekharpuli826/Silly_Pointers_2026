@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Create Match</h1>
+
+<form method="POST">
+    <label>Team 1:</label>
+    <select name="team1">
+        {% for t in teams %}
+        <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Team 2:</label>
+    <select name="team2">
+        {% for t in teams %}
+        <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Date:</label>
+    <input type="date" name="date"><br><br>
+
+    <label>Time:</label>
+    <input type="time" name="time"><br><br>
+
+    <label>Venue:</label>
+    <input type="text" name="venue"><br><br>
+
+    <button type="submit">Create Match</button>
+</form>
+
+{% endblock %}

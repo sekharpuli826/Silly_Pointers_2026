@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Update Points Table</h1>
+
+<form method="POST">
+    <label>Team:</label>
+    <input type="text" name="team"><br><br>
+
+    <label>Played:</label>
+    <input type="number" name="played"><br><br>
+
+    <label>Won:</label>
+    <input type="number" name="won"><br><br>
+
+    <label>Lost:</label>
+    <input type="number" name="lost"><br><br>
+
+    <label>Points:</label>
+    <input type="number" name="points"><br><br>
+
+    <label>NRR:</label>
+    <input type="text" name="nrr"><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+{% endblock %}

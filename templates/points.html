@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Points Table</h1>
+
+<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th>Rank</th>
+        <th>Team</th>
+        <th>Played</th>
+        <th>Won</th>
+        <th>Lost</th>
+        <th>Points</th>
+        <th>NRR</th>
+    </tr>
+
+    {% for row in points %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.team }}</td>
+        <td>{{ row.played }}</td>
+        <td>{{ row.won }}</td>
+        <td>{{ row.lost }}</td>
+        <td>{{ row.points }}</td>
+        <td>{{ row.nrr }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Update Leaderboard</h1>
+
+<form method="POST">
+    <label>Player:</label>
+    <input type="text" name="player"><br><br>
+
+    <label>Team:</label>
+    <input type="text" name="team"><br><br>
+
+    <label>Runs:</label>
+    <input type="number" name="runs"><br><br>
+
+    <label>Wickets:</label>
+    <input type="number" name="wickets"><br><br>
+
+    <label>Points:</label>
+    <input type="number" name="points"><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+{% endblock %}

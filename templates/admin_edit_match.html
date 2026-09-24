@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Edit Match {{ match_id }}</h1>
+
+<form method="POST">
+    <label>Team 1 Runs:</label>
+    <input type="number" name="team1_runs" value="{{ match.team1_runs }}"><br><br>
+
+    <label>Team 1 Overs:</label>
+    <input type="text" name="team1_overs" value="{{ match.team1_overs }}"><br><br>
+
+    <label>Team 2 Runs:</label>
+    <input type="number" name="team2_runs" value="{{ match.team2_runs }}"><br><br>
+
+    <label>Team 2 Overs:</label>
+    <input type="text" name="team2_overs" value="{{ match.team2_overs }}"><br><br>
+
+    <label>Winner:</label>
+    <select name="winner">
+        <option value="">-- Select Winner --</option>
+        <option value="{{ match.team1 }}">{{ match.team1 }}</option>
+        <option value="{{ match.team2 }}">{{ match.team2 }}</option>
+    </select><br><br>
+
+    <button type="submit">Update Match</button>
+</form>
+
+{% endblock %}

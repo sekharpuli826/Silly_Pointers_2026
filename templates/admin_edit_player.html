@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Edit Player: {{ player }}</h1>
+
+<form method="POST">
+    <label>Runs:</label>
+    <input type="number" name="runs" value="{{ stats.runs }}"><br><br>
+
+    <label>Wickets:</label>
+    <input type="number" name="wickets" value="{{ stats.wickets }}"><br><br>
+
+    <label>Points:</label>
+    <input type="number" name="points" value="{{ stats.points }}"><br><br>
+
+    <button type="submit">Update Player</button>
+</form>
+
+{% endblock %}

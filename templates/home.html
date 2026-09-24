@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Welcome to Silly Pointers 2026 🏏</h1>
+<p class="page-subtitle">Your live cricket tournament dashboard</p>
+
+<!-- Quick Links -->
+<div class="quick-links">
+    <a href="/live" class="button">Live Score</a>
+    <a href="/points" class="button">Points Table</a>
+    <a href="/leaderboard" class="button">Leaderboard</a>
+    <a href="/matches" class="button">Upcoming Matches</a>
+    <a href="/teams" class="button">Teams</a>
+    <a href="/admin" class="button">Admin Panel</a>
+</div>
+
+<hr style="margin: 40px 0;">
+
+<!-- Live Score Widget -->
+<h2>Live Score</h2>
+<div class="card">
+    <p><strong>Batting:</strong> {{ live_score.batting_team }}</p>
+    <p><strong>Score:</strong> {{ live_score.runs }}/{{ live_score.wickets }} ({{ live_score.overs }} ov)</p>
+    <p><strong>Bowling:</strong> {{ live_score.bowling_team }}</p>
+    <p><strong>Last Update:</strong> {{ live_score.last_update }}</p>
+    <a href="/live" class="button">View Full Live Score</a>
+</div>
+
+<hr style="margin: 40px 0;">
+
+<!-- Points Table Snapshot -->
+<h2>Points Table Snapshot</h2>
+<table border="1" cellpadding="10" style="width: 100%; border-collapse: collapse;">
+    <tr>
+        <th>Team</th>
+        <th>Points</th>
+        <th>NRR</th>
+    </tr>
+    {% for team, data in points %}
+    <tr>
+        <td>{{ team }}</td>
+        <td>{{ data.points }}</td>
+        <td>{{ data.nrr }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr style="margin: 40px 0;">
+
+<!-- Leaderboard Snapshot -->
+<h2>Top Players</h2>
+<table border="1" cellpadding="10" style="width: 100%; border-collapse: collapse;">
+    <tr>
+        <th>Player</th>
+        <th>Runs</th>
+        <th>Wickets</th>
+        <th>Points</th>
+    </tr>
+    {% for player, stats in leaderboard[:5] %}
+    <tr>
+        <td>{{ player }}</td>
+        <td>{{ stats.runs }}</td>
+        <td>{{ stats.wickets }}</td>
+        <td>{{ stats.points }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

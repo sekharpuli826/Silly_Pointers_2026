@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Manage Players</h1>
+
+{% for team, players in roster.items() %}
+<h2>{{ team }}</h2>
+<ul>
+    {% for player in players %}
+    <li>
+        {{ player }} —
+        Runs: {{ stats[player].runs }},
+        Wickets: {{ stats[player].wickets }},
+        Points: {{ stats[player].points }}
+        <a href="/admin/edit_player/{{ player }}">Edit</a> |
+        <a href="/admin/delete_player/{{ player }}">Delete</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %}
+
+{% endblock %}

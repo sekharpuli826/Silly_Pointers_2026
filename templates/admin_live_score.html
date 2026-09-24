@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Update Live Score</h1>
+
+<form method="POST">
+    <label>Batting Team:</label>
+    <input type="text" name="batting_team"><br><br>
+
+    <label>Runs:</label>
+    <input type="number" name="runs"><br><br>
+
+    <label>Wickets:</label>
+    <input type="number" name="wickets"><br><br>
+
+    <label>Overs (e.g., 12.3):</label>
+    <input type="text" name="overs"><br><br>
+
+    <label>Bowling Team:</label>
+    <input type="text" name="bowling_team"><br><br>
+
+    <label>Last Update (e.g., 3:45 PM):</label>
+    <input type="text" name="last_update"><br><br>
+
+    <!-- ⭐ NEW FIELDS FOR AUTO PLAYER STATS UPDATE -->
+
+    <label>Striker:</label>
+    <input type="text" name="striker"><br><br>
+
+    <label>Bowler:</label>
+    <input type="text" name="bowler"><br><br>
+
+    <label>Runs Scored (this ball):</label>
+    <input type="number" name="runs_scored"><br><br>
+
+    <label>Wicket Taken (0 or 1):</label>
+    <input type="number" name="wicket_taken"><br><br>
+
+    <button type="submit">Update Live Score</button>
+</form>
+
+{% endblock %}

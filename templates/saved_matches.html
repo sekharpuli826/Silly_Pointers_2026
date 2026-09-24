@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Saved Matches</h1>
+
+<table border="1" cellpadding="10" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <th>#</th>
+        <th>Date</th>
+        <th>Final Score</th>
+        <th>View</th>
+    </tr>
+
+    {% for match in results %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ match.timestamp }}</td>
+        <td>{{ match.final_score.runs }}/{{ match.final_score.wickets }} ({{ match.final_score.overs }} ov)</td>
+        <td><a href="/match_summary/{{ loop.index0 }}">View Summary</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

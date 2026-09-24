@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Update Scorecard - {{ match_id }}</h1>
+
+<form method="POST">
+    <label>Batting:</label><br>
+    <textarea name="batting" rows="6" cols="80">{{ card.batting }}</textarea><br><br>
+
+    <label>Bowling:</label><br>
+    <textarea name="bowling" rows="6" cols="80">{{ card.bowling }}</textarea><br><br>
+
+    <label>Fall of Wickets:</label><br>
+    <textarea name="fall_of_wickets" rows="4" cols="80">{{ card.fall_of_wickets }}</textarea><br><br>
+
+    <label>Summary:</label><br>
+    <textarea name="summary" rows="4" cols="80">{{ card.summary }}</textarea><br><br>
+
+    <button type="submit">Update Scorecard</button>
+</form>
+
+{% endblock %}
